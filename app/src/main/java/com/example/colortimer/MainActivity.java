@@ -31,9 +31,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     PieProgressDrawable pieProgressDrawable;
     private EditText editTextMinute;
     private TextView textViewTime;
-    private ImageView imageViewReset;
+    private ImageView imageViewWorkRest, imageViewRepeat;
     private ImageView imageViewStartStop;
     private CountDownTimer countDownTimer;
+    private boolean isRepeat = true;
+    private boolean isWork = true;
 
 
     @Override
@@ -66,7 +68,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        progressBarCircle = (ProgressBar) findViewById(R.id.progressBarCircle);
         editTextMinute = (EditText) findViewById(R.id.editTextMinute);
         textViewTime = (TextView) findViewById(R.id.textViewTime);
-        imageViewReset = (ImageView) findViewById(R.id.imageViewReset);
+        imageViewWorkRest = (ImageView) findViewById(R.id.imageViewWorkRest);
+        imageViewRepeat = (ImageView) findViewById(R.id.imageViewRepeat);
         imageViewStartStop = (ImageView) findViewById(R.id.imageViewStartStop);
     }
 
@@ -74,8 +77,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * method to initialize the click listeners
      */
     private void initListeners() {
-        imageViewReset.setOnClickListener(this);
+        imageViewWorkRest.setOnClickListener(this);
         imageViewStartStop.setOnClickListener(this);
+        imageViewRepeat.setOnClickListener(this);
     }
 
     /**
@@ -86,11 +90,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.imageViewReset:
-                reset();
+            case R.id.imageViewWorkRest:
+                changeWorkState();
                 break;
             case R.id.imageViewStartStop:
                 startStop();
+                break;
+            case R.id.imageViewRepeat:
+                changeRepeatState();
                 break;
         }
     }
@@ -103,6 +110,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startCountDownTimer();
     }
 
+    private void changeWorkState(){
+
+        if(isWork){
+            isWork = false;
+            pieProgressDrawable.setColor(ContextCompat.getColor(this, R.color.colorGoogleBlue));
+            imageViewWorkRest.setImageResource(R.drawable.ic_monetization_on_24px);
+        } else {
+            isWork = true;
+            pieProgressDrawable.setColor(ContextCompat.getColor(this, R.color.colorGoogleRed));
+            imageViewWorkRest.setImageResource(R.drawable.ic_emoji_food_beverage_24px);
+        }
+    }
+
+    private void changeRepeatState(){
+
+        if(isRepeat){
+            isRepeat = false;
+            imageViewRepeat.setImageResource(R.drawable.ic_repeat_none_24px);
+        } else {
+            isRepeat = true;
+            imageViewRepeat.setImageResource(R.drawable.ic_repeat_24px);
+        }
+
+    }
 
     /**
      * method to start and stop count down timer
@@ -114,12 +145,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             setTimerValues();
             // call to initialize the progress bar values
             setProgressBarValues();
-            // showing the reset icon
-            imageViewReset.setVisibility(View.VISIBLE);
             // changing play icon to stop icon
-            imageViewStartStop.setImageResource(R.drawable.ic_pause_circle_outline_24px);
+            imageViewStartStop.setImageResource(R.drawable.ic_pause_circle_filled_24px);
             // making edit text not editable
-            editTextMinute.setEnabled(false);
+            editTextMinute.setVisibility(View.INVISIBLE);
             // changing the timer status to started
             timerStatus = TimerStatus.STARTED;
             // call to start the count down timer
@@ -127,12 +156,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         } else {
 
-            // hiding the reset icon
-            imageViewReset.setVisibility(View.GONE);
             // changing stop icon to start icon
-            imageViewStartStop.setImageResource(R.drawable.ic_play_circle_outline_24px);
+            imageViewStartStop.setImageResource(R.drawable.ic_play_circle_filled_24px);
             // making edit text editable
-            editTextMinute.setEnabled(true);
+            editTextMinute.setVisibility(View.VISIBLE);
             // changing the timer status to stopped
             timerStatus = TimerStatus.STOPPED;
             stopCountDownTimer();
@@ -162,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void startCountDownTimer() {
 
-        countDownTimer = new CountDownTimer(timeCountInMilliSeconds, 1000) {
+        countDownTimer = new CountDownTimer(timeCountInMilliSeconds, 100) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -178,14 +205,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
                 // call to initialize the progress bar values
                 setProgressBarValues();
-                // hiding the reset icon
-                imageViewReset.setVisibility(View.GONE);
-                // changing stop icon to start icon
-                imageViewStartStop.setImageResource(R.drawable.icon_start);
-                // making edit text editable
-                editTextMinute.setEnabled(true);
-                // changing the timer status to stopped
-                timerStatus = TimerStatus.STOPPED;
+
+                if(!isRepeat){
+                    // changing stop icon to start icon
+                    imageViewStartStop.setImageResource(R.drawable.ic_play_circle_filled_24px);
+                    // making edit text editable
+                    editTextMinute.setVisibility(View.VISIBLE);
+                    // changing the timer status to stopped
+                    timerStatus = TimerStatus.STOPPED;
+                } else {
+                    startCountDownTimer();
+                }
+
+
             }
 
         }.start();
@@ -215,7 +247,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void updateTime(int progress) {
         pieProgressDrawable.setLevel(progress);
-
         timeProgress.invalidate();
     }
 

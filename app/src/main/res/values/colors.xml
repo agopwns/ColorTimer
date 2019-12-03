@@ -13,4 +13,5 @@
 
     <color name="colorBackgroundRed">#FF6357</color>
     <color name="colorGoogleRed">#FF4437</color>
+    <color name="colorGoogleBlue">#03A9F4</color>
 </resources>
