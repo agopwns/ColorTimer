@@ -64,11 +64,11 @@
 
     <ImageView
         android:id="@+id/imageViewStartStop"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_below="@+id/time_progress"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:src="@drawable/icon_start" />
+        android:layout_marginTop="60dp"
+        android:src="@drawable/ic_play_circle_filled_24px" />
 
 </RelativeLayout>

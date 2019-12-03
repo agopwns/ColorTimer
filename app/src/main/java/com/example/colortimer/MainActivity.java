@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // showing the reset icon
             imageViewReset.setVisibility(View.VISIBLE);
             // changing play icon to stop icon
-            imageViewStartStop.setImageResource(R.drawable.icon_stop);
+            imageViewStartStop.setImageResource(R.drawable.ic_pause_circle_outline_24px);
             // making edit text not editable
             editTextMinute.setEnabled(false);
             // changing the timer status to started
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // hiding the reset icon
             imageViewReset.setVisibility(View.GONE);
             // changing stop icon to start icon
-            imageViewStartStop.setImageResource(R.drawable.icon_start);
+            imageViewStartStop.setImageResource(R.drawable.ic_play_circle_outline_24px);
             // making edit text editable
             editTextMinute.setEnabled(true);
             // changing the timer status to stopped
