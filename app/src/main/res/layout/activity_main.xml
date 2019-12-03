@@ -19,79 +19,88 @@
         android:progressDrawable="@drawable/drawable_circle_yellow"
         android:rotation="-90" />-->
 
-    <ImageView
-        android:id="@+id/time_background"
-        android:layout_width="330dp"
-        android:layout_height="330dp"
-        android:padding="10dp"
-        android:indeterminate="false"
-        android:src="@drawable/clock_face_tick"
-        android:layout_centerInParent="true"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_marginTop="50dp">
 
-    <ImageView
-        android:id="@+id/time_progress"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:padding="10dp"
-        android:indeterminate="false"
-        android:layout_centerInParent="true"/>
+        <ImageView
+            android:id="@+id/time_background"
+            android:layout_width="330dp"
+            android:layout_height="330dp"
+            android:padding="10dp"
+            android:indeterminate="false"
+            android:src="@drawable/clock_face_tick"
+            android:layout_centerInParent="true"/>
+
+        <ImageView
+            android:id="@+id/time_progress"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:padding="10dp"
+            android:indeterminate="false"
+            android:layout_centerInParent="true"/>
 
 
 
-    <EditText
-        android:id="@+id/editTextMinute"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/textViewTime"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
-        android:gravity="center"
-        android:hint="@string/hint_minute"
-        android:inputType="number"
-        android:maxLength="15"
-        android:maxLines="1"
-        android:minEms="5"
-        android:text="15"
-        android:textColor="@color/colorWhiteGrey"
-        android:theme="@style/EditTextStyle"
-        android:textColorHint="@color/colorWhiteGrey" />
+        <EditText
+            android:id="@+id/editTextMinute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/textViewTime"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:hint="@string/hint_minute"
+            android:inputType="number"
+            android:maxLength="2"
+            android:maxLines="1"
+            android:minEms="5"
+            android:text="15"
+            android:textColor="@color/colorWhiteGrey"
+            android:theme="@style/EditTextStyle"
+            android:textColorHint="@color/colorWhiteGrey" />
 
-    <TextView
-        android:id="@+id/textViewTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="00:15:00"
-        android:textColor="@color/colorWhiteGrey"
-        android:textSize="40sp" />
+        <TextView
+            android:id="@+id/textViewTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="00:15:00"
+            android:textColor="@color/colorWhiteGrey"
+            android:textSize="40sp" />
 
-    <ImageView
-        android:id="@+id/imageViewWorkRest"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_below="@+id/time_progress"
-        android:layout_marginTop="82dp"
-        android:layout_marginEnd="49dp"
-        android:layout_toStartOf="@+id/imageViewStartStop"
-        android:src="@drawable/ic_emoji_food_beverage_24px" />
+        <ImageView
+            android:id="@+id/imageViewWorkRest"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/time_progress"
+            android:layout_marginTop="102dp"
+            android:layout_marginEnd="49dp"
+            android:layout_toStartOf="@+id/imageViewStartStop"
+            android:src="@drawable/ic_emoji_food_beverage_24px" />
 
-    <ImageView
-        android:id="@+id/imageViewStartStop"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_below="@+id/time_progress"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="62dp"
-        android:src="@drawable/ic_play_circle_filled_24px" />
+        <ImageView
+            android:id="@+id/imageViewStartStop"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_below="@+id/time_progress"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="82dp"
+            android:src="@drawable/ic_play_circle_filled_24px" />
 
-    <ImageView
-        android:id="@+id/imageViewRepeat"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_below="@+id/time_progress"
-        android:layout_marginTop="82dp"
-        android:layout_marginEnd="-142dp"
-        android:layout_toStartOf="@+id/imageViewStartStop"
-        android:src="@drawable/ic_repeat_24px" />
+        <ImageView
+            android:id="@+id/imageViewRepeat"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/time_progress"
+            android:layout_marginTop="101dp"
+            android:layout_marginEnd="-142dp"
+            android:layout_toStartOf="@+id/imageViewStartStop"
+            android:src="@drawable/ic_repeat_24px" />
+
+    </RelativeLayout>
+
+
 
 </RelativeLayout>
