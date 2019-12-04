@@ -27,6 +27,9 @@ public interface TimeMarkDao {
     @Query("SELECT * FROM timeMark")
     List<TimeMark> getTimeMark();
 
+    @Query("SELECT * FROM timeMark WHERE startTime BETWEEN :start AND :end ")
+    List<TimeMark> getTimeMarkFromTo(long start, long end);
+
     @Query("SELECT * FROM timeMark WHERE workState LIKE 'work'")
     List<TimeMark> getWorkTime();
 

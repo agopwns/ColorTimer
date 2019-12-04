@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="color_array">
+        <item>@color/colorGoogleRed</item>
+        <item>@color/colorGoogleBlue</item>
+        <item>@color/colorGoogleYellow</item>
+    </array>
+
+    <string-array name="spinner_array">
+        <item>Single</item>
+        <item>Range</item>
+    </string-array>
+</resources>
