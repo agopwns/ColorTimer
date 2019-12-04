@@ -69,6 +69,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initViews();
         // method call to initialize the listeners
         initListeners();
+
+
+    }
+
+    private void initMyData() {
+
+//        long tempStaTime = 1575299800000L;
+//        long tempEndTime = 1575333100000L;
+//
+//        isWork = true;
+//
+//        long usedTime = tempEndTime - tempStaTime;
+//        String workState = "";
+//        if(isWork)
+//            workState = "work";
+//        else
+//            workState = "rest";
+//
+//        TimeMark timeMark = new TimeMark();
+//        timeMark.setStartTime(tempStaTime);
+//        timeMark.setEndTime(tempEndTime);
+//        timeMark.setUsedTime(usedTime);
+//        timeMark.setWorkState(workState);
+//        timeMark.setUpload(false);
+//        dao.insertTimeMark(timeMark);
+//
+//        tempStaTime = 1575334100000L;
+//        tempEndTime = 1575354800000L;
+//
+//        isWork = false;
+//
+//        usedTime = tempEndTime - tempStaTime;
+//        workState = "";
+//        if(isWork)
+//            workState = "work";
+//        else
+//            workState = "rest";
+//
+//        TimeMark timeMark2 = new TimeMark();
+//        timeMark2.setStartTime(tempStaTime);
+//        timeMark2.setEndTime(tempEndTime);
+//        timeMark2.setUsedTime(usedTime);
+//        timeMark2.setWorkState(workState);
+//        timeMark2.setUpload(false);
+//        dao.insertTimeMark(timeMark2);
     }
 
     /**

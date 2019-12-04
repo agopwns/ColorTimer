@@ -38,6 +38,7 @@
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:backgroundTint="@color/colorWhite"
                     />
 
 
@@ -47,9 +48,8 @@
                 android:id="@+id/calenderView"
                 android:layout_width="390dp"
                 android:layout_height="390dp"
-
                 android:layout_gravity="center"
-                app:mcv_showOtherDates="none"
+                app:mcv_showOtherDates="decorated_disabled"
                 app:mcv_selectionColor="#3F51B5"
                 app:mcv_arrowColor="@color/colorWhite"
                 app:mcv_headerTextAppearance="@style/CustomTextAppearance"

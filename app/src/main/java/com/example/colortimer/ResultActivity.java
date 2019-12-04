@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,10 +37,12 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.StackedValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.MPPointF;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -60,13 +63,13 @@ import static com.example.colortimer.Time.makeShortTimeString;
 
 public class ResultActivity extends AppCompatActivity implements OnItemSelectedListener{
 
-    private TextView workTime, restTime;
     private TimeMarkDao dao;
     private static String TAG = "ResultActivity";
     private Date mSelectedDate;
     private long start;
     private long end;
     BarChart barChart;
+    private LinearLayout todayLayout, weekLayout;
     protected Typeface tfLight;
     MaterialCalendarView materialCalendarView;
 
@@ -78,6 +81,9 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
         materialCalendarView = findViewById(R.id.calenderView);
 
         //tfLight = Typeface.createFromAsset(getAssets(), "OpenSans-Light.ttf");
+
+        todayLayout = findViewById(R.id.layout_today);
+        weekLayout = findViewById(R.id.layout_week);
 
         // connect db
         dao = TimeMarkDB.getInstance(this).timeMarkDao();
@@ -112,7 +118,7 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
                     long usedFromToTime = 0;
 
                     Toast.makeText(getApplicationContext(), "선택한 날짜 : " +
-                            date.getMonth() + "월" + date.getDay(), Toast.LENGTH_SHORT ).show();
+                            date.getMonth() + "월" + date.getDay() + "일", Toast.LENGTH_SHORT ).show();
 
                     Log.i(TAG, "선택한 날짜 : " +
                             date.getMonth() + "월" + date.getDay() + "일");
@@ -150,12 +156,12 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
                     }
 
                     String resultTime = makeShortTimeString(getApplicationContext(), usedWorkTime / 1000);
-                    workTime.setText(resultTime);
+//                    workTime.setText(resultTime);
 
                     float workFloat = convertStringToFloat(resultTime);
 
                     resultTime = makeShortTimeString(getApplicationContext(), usedRestTime / 1000);
-                    restTime.setText(resultTime);
+//                    restTime.setText(resultTime);
 
                     float restFloat = convertStringToFloat(resultTime);
                     // 남은 시간 계산
@@ -164,6 +170,9 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
 
                     // today 파이 차트 ******************************************************************
                     PieChart chart = (PieChart) findViewById(R.id.pieChart);
+                    chart.setUsePercentValues(true);
+                    chart.getDescription().setEnabled(false);
+                    chart.setExtraOffsets(5, 10, 5, 5);
 
                     //chart.setCenterTextTypeface(tfLight);
                     chart.setCenterText(generateCenterSpannableText());
@@ -171,7 +180,7 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
                     chart.setDrawHoleEnabled(true);
                     chart.setHoleColor(getApplicationContext().getResources().getColor(R.color.colorPrimaryDark));
 
-                    chart.setTransparentCircleColor(Color.WHITE);
+                    chart.setTransparentCircleColor(getApplicationContext().getResources().getColor(R.color.colorWhite));
                     chart.setTransparentCircleAlpha(110);
 
                     chart.setHoleRadius(58f);
@@ -184,6 +193,19 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
                     chart.setRotationEnabled(true);
                     chart.setHighlightPerTapEnabled(true);
 
+                    Legend l = chart.getLegend();
+                    l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+                    l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+                    l.setOrientation(Legend.LegendOrientation.VERTICAL);
+                    l.setDrawInside(false);
+                    l.setXEntrySpace(7f);
+                    l.setYEntrySpace(0f);
+                    l.setYOffset(0f);
+                    l.setTextColor(getApplicationContext().getResources().getColor(R.color.colorWhite));
+
+                    chart.setEntryLabelColor(getApplicationContext().getResources().getColor(R.color.colorWhite));
+                    chart.setEntryLabelTextSize(12f);
+
                     // 차트 색상 설정
                     int[] colors = getApplicationContext().getResources().getIntArray(R.array.color_array);
                     List<Integer> resultColor = ColorTemplate.createColors(colors);
@@ -191,17 +213,40 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
                     // 데이터 설정
                     ArrayList NoOfEmp = new ArrayList();
 
-                    NoOfEmp.add(new PieEntry(workFloat, 0));
-                    NoOfEmp.add(new PieEntry(restFloat, 1));
-                    NoOfEmp.add(new PieEntry(otherFloat, 2));
-                    PieDataSet dataSet = new PieDataSet(NoOfEmp, "Used Time");
+                    NoOfEmp.add(new PieEntry(workFloat,"Work",
+                            getResources().getDrawable(R.drawable.ic_emoji_food_beverage_24px)));
+                    NoOfEmp.add(new PieEntry(restFloat, "Rest",
+                            getResources().getDrawable(R.drawable.ic_emoji_food_beverage_24px)));
+                    NoOfEmp.add(new PieEntry(otherFloat, "Others",
+                            getResources().getDrawable(R.drawable.ic_emoji_food_beverage_24px)));
+
+                    // 라벨 설정
+                    PieDataSet dataSet = new PieDataSet(NoOfEmp, "");
+                    dataSet.setDrawIcons(false);
+                    dataSet.setSliceSpace(3f);
+                    dataSet.setIconsOffset(new MPPointF(0, 40));
+                    dataSet.setSelectionShift(5f);
+                    dataSet.setColors(resultColor); // 라벨 앞의 색상
+
+
+                    List<Integer> whiteColor = new ArrayList<>();
+                    whiteColor.add(Color.WHITE);
+                    dataSet.setValueTextColors(whiteColor); // 파이 차트 안에 퍼센트 색상
 
                     PieData data = new PieData();
+                    data.setValueFormatter(new PercentFormatter(chart));
+                    data.setValueTextSize(10f);
+                    data.setValueTextColor(getApplicationContext().getResources().getColor(R.color.colorWhite));
+                    data.setValueTextColors(whiteColor);
+
                     data.setDataSet(dataSet);
                     chart.setData(data);
-                    dataSet.setColors(resultColor);
+                    //dataSet.setColors(resultColor);
 
                     chart.animateY(1300, Easing.EaseInOutQuad);
+
+//                    chart.highlightValues(null);
+                    chart.invalidate();
                 }
             }
         });
@@ -230,13 +275,14 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
         leftAxis.setTextColor(getApplicationContext().getResources().getColor(R.color.colorWhite));
         barChart.getAxisRight().setEnabled(false);
 
-//        ValueFormatter xAxisFormatter = new DayAxisValueFormatter(barChart);
-//        XAxis xLabels = barChart.getXAxis();
-//        xLabels.setPosition(XAxis.XAxisPosition.TOP);
-//        xLabels.setGranularity(1f); // only intervals of 1 day
-//        xLabels.setLabelCount(7);
-//        xLabels.setTextColor(getApplicationContext().getResources().getColor(R.color.colorWhite));
-//        xLabels.setValueFormatter(xAxisFormatter);
+        ValueFormatter xAxisFormatter = new DayAxisValueFormatter(barChart);
+        XAxis xLabels = barChart.getXAxis();
+        xLabels.setEnabled(false);
+        xLabels.setPosition(XAxis.XAxisPosition.TOP);
+        xLabels.setGranularity(1f); // only intervals of 1 day
+        xLabels.setLabelCount(7);
+        xLabels.setTextColor(getApplicationContext().getResources().getColor(R.color.colorPrimary));
+        xLabels.setValueFormatter(xAxisFormatter);
 
         Legend l = barChart.getLegend();
         l.setTextColor(getApplicationContext().getResources().getColor(R.color.colorWhite));
@@ -304,12 +350,12 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
                     }
 
                     String resultTime = makeShortTimeString(getApplicationContext(), usedWorkTime / 1000);
-                    workTime.setText(resultTime);
+                    //workTime.setText(resultTime);
 
                     float workFloat = convertStringToFloat(resultTime);
 
                     resultTime = makeShortTimeString(getApplicationContext(), usedRestTime / 1000);
-                    restTime.setText(resultTime);
+                    //restTime.setText(resultTime);
 
                     float restFloat = convertStringToFloat(resultTime);
                     // 남은 시간 계산
@@ -330,7 +376,7 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
                     barChart.getData().notifyDataChanged();
                     barChart.notifyDataSetChanged();
                 } else {
-                    set1 = new BarDataSet(values, "range data");
+                    set1 = new BarDataSet(values, "");
                     set1.setDrawIcons(false);
                     set1.setColors(resultColor);
                     set1.setStackLabels(new String[]{"Work", "Rest", "Others"});
@@ -346,6 +392,7 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
                 }
 
                 barChart.setFitBars(true);
+                barChart.animateY(1300, Easing.EaseOutBack);
                 barChart.invalidate();
 
             }
@@ -432,8 +479,13 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if(position == 0){
             materialCalendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_SINGLE);
+            weekLayout.setVisibility(View.GONE);
+            todayLayout.setVisibility(View.VISIBLE);
         } else {
             materialCalendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_RANGE);
+            todayLayout.setVisibility(View.GONE);
+            weekLayout.setVisibility(View.VISIBLE);
+
         }
     }
 
