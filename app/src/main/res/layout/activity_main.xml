@@ -99,6 +99,16 @@
             android:layout_toStartOf="@+id/imageViewStartStop"
             android:src="@drawable/ic_repeat_24px" />
 
+        <ImageView
+            android:id="@+id/imageViewReport"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/time_progress"
+            android:layout_marginTop="-443dp"
+            android:layout_marginEnd="-186dp"
+            android:layout_toStartOf="@+id/imageViewStartStop"
+            android:src="@drawable/ic_assessment_24px" />
+
     </RelativeLayout>
 
 

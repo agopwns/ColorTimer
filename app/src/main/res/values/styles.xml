@@ -16,4 +16,8 @@
         <item name="colorAccent">@color/colorWhiteGrey</item>
     </style>
 
+    <style name="CustomTextAppearance" parent="TextAppearance.MaterialCalendarWidget.Date">
+        <item name="android:textColor">@color/colorWhite</item>
+    </style>
+
 </resources>

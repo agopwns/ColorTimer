@@ -3,6 +3,7 @@ package com.example.colortimer;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.DisplayMetrics;
@@ -12,6 +13,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.colortimer.db.TimeMarkDB;
+import com.example.colortimer.db.TimeMarkDao;
+import com.example.colortimer.model.TimeMark;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,10 +37,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText editTextMinute;
     private TextView textViewTime;
     private ImageView imageViewWorkRest, imageViewRepeat;
-    private ImageView imageViewStartStop;
+    private ImageView imageViewStartStop, imageViewReport;
     private CountDownTimer countDownTimer;
     private boolean isRepeat = true;
     private boolean isWork = true;
+    private boolean isSavingData = false;
+    private TimeMarkDao dao;
+    private long startTime;
+    private long endTime;
 
 
     @Override
@@ -48,11 +57,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-
         pieProgressDrawable.setBorderWidth(2, dm);
-
+        // add ImageProgressBar by PeanutButter
         timeProgress = (ImageView) findViewById(R.id.time_progress);
         timeProgress.setImageDrawable(pieProgressDrawable);
+
+        // connect db
+        dao = TimeMarkDB.getInstance(this).timeMarkDao();
 
         // method call to initialize the views
         initViews();
@@ -71,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         imageViewWorkRest = (ImageView) findViewById(R.id.imageViewWorkRest);
         imageViewRepeat = (ImageView) findViewById(R.id.imageViewRepeat);
         imageViewStartStop = (ImageView) findViewById(R.id.imageViewStartStop);
+        imageViewReport = (ImageView) findViewById(R.id.imageViewReport);
     }
 
     /**
@@ -80,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         imageViewWorkRest.setOnClickListener(this);
         imageViewStartStop.setOnClickListener(this);
         imageViewRepeat.setOnClickListener(this);
+        imageViewReport.setOnClickListener(this);
     }
 
     /**
@@ -99,6 +112,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.imageViewRepeat:
                 changeRepeatState();
                 break;
+            case R.id.imageViewReport:
+                Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
+                startActivity(intent);
+                break;
         }
     }
 
@@ -112,6 +129,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void changeWorkState(){
 
+        endTime = System.currentTimeMillis();
+        saveTimeMark();
+        startTime = System.currentTimeMillis();
+
         if(isWork){
             isWork = false;
             pieProgressDrawable.setColor(ContextCompat.getColor(this, R.color.colorGoogleBlue));
@@ -121,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             pieProgressDrawable.setColor(ContextCompat.getColor(this, R.color.colorGoogleRed));
             imageViewWorkRest.setImageResource(R.drawable.ic_emoji_food_beverage_24px);
         }
+
     }
 
     private void changeRepeatState(){
@@ -139,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * method to start and stop count down timer
      */
     private void startStop() {
+
         if (timerStatus == TimerStatus.STOPPED) {
 
             // call to initialize the timer values
@@ -155,6 +178,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startCountDownTimer();
 
         } else {
+
+            endTime = System.currentTimeMillis();
+            saveTimeMark();
 
             // changing stop icon to start icon
             imageViewStartStop.setImageResource(R.drawable.ic_play_circle_filled_24px);
@@ -189,7 +215,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void startCountDownTimer() {
 
-        countDownTimer = new CountDownTimer(timeCountInMilliSeconds, 100) {
+        startTime = System.currentTimeMillis();
+        if(countDownTimer != null) countDownTimer.cancel();
+        countDownTimer = new CountDownTimer(timeCountInMilliSeconds, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -201,6 +229,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onFinish() {
+
+                endTime = System.currentTimeMillis();
+                saveTimeMark();
 
                 textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
                 // call to initialize the progress bar values
@@ -216,8 +247,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     startCountDownTimer();
                 }
-
-
             }
 
         }.start();
@@ -248,6 +277,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void updateTime(int progress) {
         pieProgressDrawable.setLevel(progress);
         timeProgress.invalidate();
+    }
+
+    public void saveTimeMark(){
+
+        // 타이머가 자동 재시작시 빠른 접근(밀리 세컨드 단위)으로 여러 번 저장하는 것을 막기 위해
+        // 저장 중에는 다른 저장 요청을 받아들이지 않음.
+        if(!isSavingData){
+
+            isSavingData = true;
+
+            long usedTime = endTime - startTime;
+            String workState = "";
+            if(isWork)
+                workState = "work";
+            else
+                workState = "rest";
+
+            TimeMark timeMark = new TimeMark();
+            timeMark.setStartTime(startTime);
+            timeMark.setEndTime(endTime);
+            timeMark.setUsedTime(usedTime);
+            timeMark.setWorkState(workState);
+            timeMark.setUpload(false);
+            dao.insertTimeMark(timeMark);
+
+            isSavingData = false;
+        }
     }
 
 
