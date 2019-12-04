@@ -43,8 +43,6 @@
 
             </LinearLayout>
 
-
-
             <com.prolificinteractive.materialcalendarview.MaterialCalendarView
                 android:id="@+id/calenderView"
                 android:layout_width="390dp"
@@ -59,87 +57,52 @@
                 app:mcv_weekDayTextAppearance="@style/CustomTextAppearance"
                 />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="50dp"
-                android:layout_marginBottom="10dp"
-                android:text="Today"
-                android:textColor="@color/colorWhite"
-                android:textSize="20dp" />
-
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pieChart"
-                android:layout_width="340dp"
-                android:layout_height="340dp"
-                android:layout_gravity="center"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="50dp"
-                android:layout_marginBottom="10dp"
-                android:text="Week"
-                android:textColor="@color/colorWhite"
-                android:textSize="20dp" />
-
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barChart"
-                android:layout_width="340dp"
-                android:layout_height="340dp"
-                android:layout_gravity="center"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Total"
-                android:textColor="@color/colorWhite"
-                android:textSize="20dp" />
-
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/layout_today"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="work : "
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Today"
                     android:textColor="@color/colorWhite"
                     android:textSize="20dp" />
 
-                <TextView
-                    android:id="@+id/workTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="work"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="20dp" />
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/pieChart"
+                    android:layout_width="340dp"
+                    android:layout_height="340dp"
+                    android:layout_gravity="center"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/layout_week"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="rest : "
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Week"
                     android:textColor="@color/colorWhite"
                     android:textSize="20dp" />
 
-                <TextView
-                    android:id="@+id/restTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="work"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="20dp" />
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/barChart"
+                    android:layout_width="340dp"
+                    android:layout_height="340dp"
+                    android:layout_gravity="center"/>
 
             </LinearLayout>
-
 
         </LinearLayout>
 

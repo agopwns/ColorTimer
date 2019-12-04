@@ -3,6 +3,7 @@ package com.example.colortimer;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -36,6 +37,7 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.StackedValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -73,8 +75,6 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
-        workTime = findViewById(R.id.workTime);
-        restTime = findViewById(R.id.restTime);
         materialCalendarView = findViewById(R.id.calenderView);
 
         //tfLight = Typeface.createFromAsset(getAssets(), "OpenSans-Light.ttf");
@@ -88,7 +88,6 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
-
 
         // 달력
         materialCalendarView.state().edit()
@@ -204,14 +203,6 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
 
                     chart.animateY(1300, Easing.EaseInOutQuad);
                 }
-
-
-
-
-
-
-
-
             }
         });
 
@@ -231,16 +222,24 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
         barChart.setDrawValueAboveBar(false);
         barChart.setHighlightFullBarEnabled(false);
 
+
         // change the position of the y-labels
         YAxis leftAxis = barChart.getAxisLeft();
-        leftAxis.setValueFormatter(new MyValueFormatter("K"));
+        leftAxis.setValueFormatter(new MyValueFormatter("H"));
         leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        leftAxis.setTextColor(getApplicationContext().getResources().getColor(R.color.colorWhite));
         barChart.getAxisRight().setEnabled(false);
 
-        XAxis xLabels = barChart.getXAxis();
-        xLabels.setPosition(XAxis.XAxisPosition.TOP);
+//        ValueFormatter xAxisFormatter = new DayAxisValueFormatter(barChart);
+//        XAxis xLabels = barChart.getXAxis();
+//        xLabels.setPosition(XAxis.XAxisPosition.TOP);
+//        xLabels.setGranularity(1f); // only intervals of 1 day
+//        xLabels.setLabelCount(7);
+//        xLabels.setTextColor(getApplicationContext().getResources().getColor(R.color.colorWhite));
+//        xLabels.setValueFormatter(xAxisFormatter);
 
         Legend l = barChart.getLegend();
+        l.setTextColor(getApplicationContext().getResources().getColor(R.color.colorWhite));
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
         l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
@@ -331,10 +330,10 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
                     barChart.getData().notifyDataChanged();
                     barChart.notifyDataSetChanged();
                 } else {
-                    set1 = new BarDataSet(values, "Statistics Vienna 2014");
+                    set1 = new BarDataSet(values, "range data");
                     set1.setDrawIcons(false);
                     set1.setColors(resultColor);
-                    set1.setStackLabels(new String[]{"Births", "Divorces", "Marriages"});
+                    set1.setStackLabels(new String[]{"Work", "Rest", "Others"});
 
                     ArrayList<IBarDataSet> dataSets = new ArrayList<>();
                     dataSets.add(set1);
