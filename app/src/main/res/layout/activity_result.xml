@@ -85,8 +85,9 @@
 
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/barChart"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_width="340dp"
+                android:layout_height="340dp"
+                android:layout_gravity="center"/>
 
             <TextView
                 android:layout_width="match_parent"

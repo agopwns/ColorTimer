@@ -23,11 +23,20 @@ import com.example.colortimer.db.TimeMarkDB;
 import com.example.colortimer.db.TimeMarkDao;
 import com.example.colortimer.model.TimeMark;
 import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.StackedValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
@@ -55,7 +64,7 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
     private Date mSelectedDate;
     private long start;
     private long end;
-
+    BarChart barChart;
     protected Typeface tfLight;
     MaterialCalendarView materialCalendarView;
 
@@ -107,7 +116,7 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
                             date.getMonth() + "월" + date.getDay(), Toast.LENGTH_SHORT ).show();
 
                     Log.i(TAG, "선택한 날짜 : " +
-                            date.getMonth() + "월" + date.getDay());
+                            date.getMonth() + "월" + date.getDay() + "일");
 
                     // 해당 날짜
                     Calendar cal = Calendar.getInstance();
@@ -195,8 +204,7 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
 
                     chart.animateY(1300, Easing.EaseInOutQuad);
                 }
-                // week 바 차트 *********************************************************************
-                // 선택한 날짜
+
 
 
 
@@ -207,33 +215,142 @@ public class ResultActivity extends AppCompatActivity implements OnItemSelectedL
             }
         });
 
+        // 차트 설정
+
+        barChart = findViewById(R.id.barChart);
+
+        barChart.getDescription().setEnabled(false);
+        barChart.setMaxVisibleValueCount(40);
+
+        // scaling can now only be done on x- and y-axis separately
+        barChart.setPinchZoom(false);
+
+        barChart.setDrawGridBackground(false);
+        barChart.setDrawBarShadow(false);
+
+        barChart.setDrawValueAboveBar(false);
+        barChart.setHighlightFullBarEnabled(false);
+
+        // change the position of the y-labels
+        YAxis leftAxis = barChart.getAxisLeft();
+        leftAxis.setValueFormatter(new MyValueFormatter("K"));
+        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        barChart.getAxisRight().setEnabled(false);
+
+        XAxis xLabels = barChart.getXAxis();
+        xLabels.setPosition(XAxis.XAxisPosition.TOP);
+
+        Legend l = barChart.getLegend();
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setDrawInside(false);
+        l.setFormSize(8f);
+        l.setFormToTextSpace(4f);
+        l.setXEntrySpace(6f);
+
+        // week 바 차트
         materialCalendarView.setOnRangeSelectedListener(new OnRangeSelectedListener() {
             @Override
             public void onRangeSelected(@NonNull MaterialCalendarView widget, @NonNull List<CalendarDay> dates) {
 
+                ArrayList<BarEntry> values = new ArrayList<>();
+                // 차트 색상 설정
+                int[] colors = getApplicationContext().getResources().getIntArray(R.array.color_array);
+                List<Integer> resultColor = ColorTemplate.createColors(colors);
+
                 // 1. 셀렉트한 날짜 가져오기
+                for(int i = 0; i < dates.size(); i++){
+                    Log.i(TAG, i + "번 선택한 날짜 : " +
+                            dates.get(i).getMonth() + "월" + dates.get(i).getDay() + "일");
 
+                    // 2. 날짜마다 시간 구하기
+                    CalendarDay date = dates.get(i);
+                    long usedWorkTime = 0;
+                    long usedRestTime = 0;
+                    long usedFromToTime = 0;
+                    start = 0;
+                    end = 0;
 
+                    // 해당 날짜
+                    Calendar cal = Calendar.getInstance();
+                    cal.set(date.getYear(), date.getMonth(), date.getDay()
+                            , 0, 0, 0);
+                    cal.set(Calendar.MILLISECOND, 0);
+                    start = cal.getTimeInMillis();
+                    Log.i(TAG, "처음 날짜 long 변환 : " + start);
 
+                    DateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm:ss"); // HH=24h, hh=12h
+                    String str = df.format(start);
+                    Log.i(TAG, "처음 날짜 date 변환 : " + str);
 
+                    // 그 다음 날짜
+                    cal.set(date.getYear(), date.getMonth(), date.getDay() + 1
+                            , 0, 0, 0);
+                    cal.set(Calendar.MILLISECOND, 0);
+                    end = cal.getTimeInMillis();
+                    Log.i(TAG, "다음 날짜 long 변환 : " + end);
 
-                // 2. 날짜마다 시간 구하기
-                // 3. 리스트 넣기 전에 바 차트에 어떻게 데이터 넣는지 확인 후 형태 결정
-                // 4. 바 차트 넣기
-                // 5. 완성
-                // 6. 테스트
+                    str = df.format(end);
+                    Log.i(TAG, "다음 날짜 date 변환 : " + str);
 
+                    List<TimeMark> fromToResult = dao.getTimeMarkFromTo(start, end);
+                    for(int index = 0; index < fromToResult.size(); index++){
+                        //Log.i(TAG, "usedFromToTime row : " + fromToResult.get(i).getUsedTime());
+
+                        if(fromToResult.get(index).getWorkState().equals("work"))
+                            usedWorkTime += fromToResult.get(index).getUsedTime();
+                        else
+                            usedRestTime += fromToResult.get(index).getUsedTime();
+                    }
+
+                    String resultTime = makeShortTimeString(getApplicationContext(), usedWorkTime / 1000);
+                    workTime.setText(resultTime);
+
+                    float workFloat = convertStringToFloat(resultTime);
+
+                    resultTime = makeShortTimeString(getApplicationContext(), usedRestTime / 1000);
+                    restTime.setText(resultTime);
+
+                    float restFloat = convertStringToFloat(resultTime);
+                    // 남은 시간 계산
+                    float otherFloat = 24 - (workFloat + restFloat);
+
+                    values.add(new BarEntry(
+                            i,
+                            new float[]{workFloat, restFloat, otherFloat},
+                            getResources().getDrawable(R.drawable.ic_emoji_food_beverage_24px)));
+                }
+
+                BarDataSet set1;
+
+                if (barChart.getData() != null &&
+                        barChart.getData().getDataSetCount() > 0) {
+                    set1 = (BarDataSet) barChart.getData().getDataSetByIndex(0);
+                    set1.setValues(values);
+                    barChart.getData().notifyDataChanged();
+                    barChart.notifyDataSetChanged();
+                } else {
+                    set1 = new BarDataSet(values, "Statistics Vienna 2014");
+                    set1.setDrawIcons(false);
+                    set1.setColors(resultColor);
+                    set1.setStackLabels(new String[]{"Births", "Divorces", "Marriages"});
+
+                    ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+                    dataSets.add(set1);
+
+                    BarData data = new BarData(dataSets);
+                    data.setValueFormatter(new StackedValueFormatter(false, "", 1));
+                    data.setValueTextColor(Color.WHITE);
+
+                    barChart.setData(data);
+                }
+
+                barChart.setFitBars(true);
+                barChart.invalidate();
 
             }
         });
-
-
-        // 2. 해당 날짜로 db 에서 가져오기 테스트
-
-
-
-
-
 
         // total
 //        List<TimeMark> totalResult = dao.getTimeMark();
