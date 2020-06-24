@@ -11,11 +11,11 @@
   
 ## 스크린샷
 <div style="float:left;">
-  <img src="https://github.com/agopwns/ColorTimer/blob/master/images/1.jpg" alt="Your image title" width="440"/> 
-  <img src="https://github.com/agopwns/ColorTimer/blob/master/images/2.jpg" alt="Your image title" width="440"/>
-  <img src="https://github.com/agopwns/ColorTimer/blob/master/images/3.jpg" alt="Your image title" width="440"/>
-  <img src="https://github.com/agopwns/ColorTimer/blob/master/images/4.jpg" alt="Your image title" width="440"/>
-  <img src="https://github.com/agopwns/ColorTimer/blob/master/images/5.jpg" alt="Your image title" width="440"/>
+  <img src="https://github.com/agopwns/ColorTimer/blob/master/images/1.jpg" alt="Your image title" width="48%"/> 
+  <img src="https://github.com/agopwns/ColorTimer/blob/master/images/2.jpg" alt="Your image title" width="48%"/>
+  <img src="https://github.com/agopwns/ColorTimer/blob/master/images/3.jpg" alt="Your image title" width="48%"/>
+  <img src="https://github.com/agopwns/ColorTimer/blob/master/images/4.jpg" alt="Your image title" width="48%"/>
+  <img src="https://github.com/agopwns/ColorTimer/blob/master/images/5.jpg" alt="Your image title" width="48%"/>
 </div>
 
 ## 기능
